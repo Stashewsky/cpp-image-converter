@@ -4,7 +4,7 @@
 #include <array>
 #include <fstream>
 #include <string_view>
-
+#include <iostream>
 using namespace std;
 
 namespace img_lib {
@@ -36,7 +36,9 @@ PACKED_STRUCT_END
 
 // функция вычисления отступа по ширине
 static int GetBMPStride(int w) {
-    return 4 * ((w * 3 + 3) / 4);
+    int colors_num = 3;
+    int padding = 4;
+    return padding * ((w * colors_num + 3) / padding);
 }
 
 // напишите эту функцию
@@ -84,6 +86,13 @@ Image LoadBMP(const Path& file){
 
     input.read(reinterpret_cast<char*>(&file_header), sizeof(file_header));
     input.read(reinterpret_cast<char*>(&info_header), sizeof(info_header));
+    if(!input){
+        std::cerr << "Read from file failed!" << endl;
+        return;
+    }
+    if(file_header.b != 'B' || file_header.m != 'M'){
+        std::cerr << "Invelid file signature!" << endl;
+    }
 
     int width = info_header.width;
     int height = info_header.height;
