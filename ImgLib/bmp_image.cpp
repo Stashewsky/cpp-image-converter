@@ -91,7 +91,7 @@ Image LoadBMP(const Path& file){
         return;
     }
     if(file_header.b != 'B' || file_header.m != 'M'){
-        std::cerr << "Invelid file signature!" << endl;
+        std::cerr << "Invalid file signature!" << endl;
     }
 
     int width = info_header.width;
@@ -104,12 +104,14 @@ Image LoadBMP(const Path& file){
 
     for(int h = height - 1; h >= 0; h--){
         input.read(buffer.data(), bmp_indent);
-        Color* line = result.GetLine(h);
+        if(input){
+            Color* line = result.GetLine(h);
 
-        for(int w = 0; w != width; w++){
-            line[w].b = static_cast<byte>(buffer[3 * w]);
-            line[w].g = static_cast<byte>(buffer[3 * w + 1]);
-            line[w].r = static_cast<byte>(buffer[3 * w + 2]);
+                for(int w = 0; w != width; w++){
+                    line[w].b = static_cast<byte>(buffer[3 * w]);
+                    line[w].g = static_cast<byte>(buffer[3 * w + 1]);
+                    line[w].r = static_cast<byte>(buffer[3 * w + 2]);
+                }
         }
     }
     return result;
